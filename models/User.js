@@ -46,7 +46,8 @@ schemaUser.statics.register = async function (username, password) {
 //Jämför lösenord
 schemaUser.methods.comparePassword = async function (password) {
     try {
-        await bcrypt.compare(password, this.password);
+        const isMatch = await bcrypt.compare(password, this.password);
+        return isMatch;
     } catch (error) {
         throw error;
     }

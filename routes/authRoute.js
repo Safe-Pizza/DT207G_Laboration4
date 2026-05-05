@@ -36,18 +36,41 @@ router.post('/register', async (req, res) => {
         } else {
             //Skapa och spara användare i databasen
             const user = new User({ username, password });
-            console.log(user);
             await user.save();
-            res.status(201).json({ message: `User ${username} created successfully`});
+
+            res.status(201).json({ message: `User ${username} created successfully` });
         }
     } catch (error) {
-        res.status(500).json({ message: `Error occurred_ ${error}` });
+        res.status(500).json({ message: `Error occurred: ${error}` });
     }
 });
 
 //Logga in
 router.post('/login', async (req, res) => {
-    res.json({ message: `Login page` });
-})
+    try {
+        const { username, password } = req.body;
+
+        //Validera data
+        if (!username || !password) {
+            return res.status(400).json({ message: `Invalid input: Username and password are required` });
+        }
+
+        //Kontrollera om användaren finns i databasen
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(401).json({ message: `Invalid username or password` });
+        }
+
+        //Kontrollera lösenord
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({ message: `Invalid username or password` });
+        } else {
+            res.status(200).json({ message: `User ${username} logged in successfully` });
+        }
+    } catch (error) {
+        res.status(500).json({ message: `Error occurred: ${error}` });
+    }
+});
 
 module.exports = router;
