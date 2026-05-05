@@ -4,9 +4,13 @@ const bodyParser = require('body-parser');
 const authRoute = require('./routes/authRoute');
 require('dotenv').config();
 
+//Varibel för express
 const app = express();
+
+//Formulärdata
 app.use(bodyParser.json());
 
+//Variabel för port
 const port = process.env.PORT || 3000;
 
 //Routes

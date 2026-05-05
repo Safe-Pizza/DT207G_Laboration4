@@ -1,5 +1,37 @@
+//Hämta paket
 const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
 const router = express.Router();
+
+//Variabel för databas URI
+const mongoUri = process.env.DATABASE;
+
+//Anslutning databas
+mongoose.connect(mongoUri).then(() => {
+    console.log("Connected to database");
+}).catch((error) => {
+    console.log("Connection failure" + error);
+})
+
+//Skapa schema för user
+const schemaUser = new mongoose.Schema({
+    username: {
+        type: String,
+        required: [true, 'Username is required'],
+        unique: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: [true, 'Password is required']
+    },
+    user_created: {
+        type: Date,
+        default: Date.now
+    }
+});
 
 //Skapa användarkonto
 router.post('/register', async (req, res) => {
