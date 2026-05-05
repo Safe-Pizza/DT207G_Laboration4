@@ -34,8 +34,11 @@ router.post('/register', async (req, res) => {
         if (errors.length > 0) {
             return res.status(400).json({ message: errors });
         } else {
-            //Skapa användare i databasen
-            res.status(201).json({ message: `User ${username} created successfully` });
+            //Skapa och spara användare i databasen
+            const user = new User({ username, password });
+            console.log(user);
+            await user.save();
+            res.status(201).json({ message: `User ${username} created successfully`});
         }
     } catch (error) {
         res.status(500).json({ message: `Error occurred_ ${error}` });

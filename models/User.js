@@ -21,16 +21,14 @@ const schemaUser = new mongoose.Schema({
 });
 
 //Hasha lösenord innan det sparas i databasen
-schemaUser.pre('save', async function (next) {
+schemaUser.pre('save', async function () {
     try {
         if (this.isNew || this.isModified('password')) {
             const hashPassword = await bcrypt.hash(this.password, 10);
             this.password = hashPassword;
         }
-
-        next();
     } catch (error) {
-        next(error);
+       throw error;
     }
 });
 
