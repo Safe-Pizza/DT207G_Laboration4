@@ -19,3 +19,31 @@ const schemaUser = new mongoose.Schema({
         default: Date.now
     }
 });
+
+//Hasha lösenord innan det sparas i databasen
+schemaUser.pre('save', async function (next) {
+    try {
+        if (this.isNew || this.isModified('password')) {
+            const hashPassword = await bcrypt.hash(this.password, 10);
+            this.password = hashPassword;
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+//Registera användare
+schemaUser.statics.register = async function (username, password) {
+    try {
+        const user = new this({ username, password });
+        await user.save();
+        return user;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const User = mongoose.model(`User`, schemaUser);
+module.exports = User;
