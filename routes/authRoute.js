@@ -15,23 +15,7 @@ mongoose.connect(mongoUri).then(() => {
     console.log("Connection failure" + error);
 })
 
-//Skapa schema för user
-const schemaUser = new mongoose.Schema({
-    username: {
-        type: String,
-        required: [true, 'Username is required'],
-        unique: true,
-        trim: true
-    },
-    password: {
-        type: String,
-        required: [true, 'Password is required']
-    },
-    user_created: {
-        type: Date,
-        default: Date.now
-    }
-});
+const User = require('../models/User');
 
 //Skapa användarkonto
 router.post('/register', async (req, res) => {
