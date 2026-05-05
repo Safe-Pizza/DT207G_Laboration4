@@ -1,6 +1,7 @@
 //Hämta paket
 const express = require('express');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const router = express.Router();
@@ -15,6 +16,7 @@ mongoose.connect(mongoUri).then(() => {
     console.log("Connection failure" + error);
 })
 
+//Hämta schema för user
 const User = require('../models/User');
 
 //Skapa användarkonto
@@ -70,7 +72,14 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: `Invalid username or password` });
         } else {
-            res.status(200).json({ message: `User ${username} logged in successfully` });
+            //Skapa JWT-token
+            const payload = { username: username };
+            const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+            const response = {
+                message: `User ${username} logged in successfully`,
+                token: token
+            }
+            res.status(200).json(response);
         }
     } catch (error) {
         res.status(500).json({ message: `Error occurred: ${error}` });
