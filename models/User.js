@@ -28,7 +28,7 @@ schemaUser.pre('save', async function () {
             this.password = hashPassword;
         }
     } catch (error) {
-       throw error;
+        throw error;
     }
 });
 
@@ -42,6 +42,41 @@ schemaUser.statics.register = async function (username, password) {
         throw error;
     }
 };
+
+//Jämför lösenord
+schemaUser.methods.comparePassword = async function (password) {
+    try {
+        await bcrypt.compare(password, this.password);
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Logga in användare
+schemaUser.statics.login = async function (username, password) {
+    try {
+        const user = await this.findOne({ username });
+
+        //kontroll finns användarnamn i databasen
+        if(!user) {
+            throw new Error(`Incorrect username or password.`);
+        }
+
+        //kontroll löseord matchar
+        const isMatch = await user.comparePassword(password);
+
+        //lösenord inte matchar
+        if (!isMatch) {
+            throw new Error(`Incorrect username or password.`);
+        }
+
+        //vid lösenordsmatchning, returnera användare
+        return user;
+
+    } catch (error) {
+        throw error;
+    }
+}
 
 const User = mongoose.model(`User`, schemaUser);
 module.exports = User;
