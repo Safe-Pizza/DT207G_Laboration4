@@ -41,6 +41,10 @@ router.post('/register', async (req, res) => {
             res.status(201).json({ message: `User ${username} created successfully` });
         }
     } catch (error) {
+        //Felhantering för felkod: 11000 (duplicate key error)
+        if (error.code === 11000) {
+            return res.status(409).json({ message: `Username already exists please select another.` });
+        }
         res.status(500).json({ message: `Error occurred: ${error}` });
     }
 });
