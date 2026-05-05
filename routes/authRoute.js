@@ -19,6 +19,14 @@ mongoose.connect(mongoUri).then(() => {
 //Hämta schema för user
 const User = require('../models/User');
 
+//Hämta middleware för att verifiera token
+const authToken = require('../authJwt/authToken');
+
+//skyddad route
+router.get('/protected', authToken, async (req, res) => {
+    res.status(200).json({ message: `Skyddad sida` });
+});
+
 //Skapa användarkonto
 router.post('/register', async (req, res) => {
     try {
