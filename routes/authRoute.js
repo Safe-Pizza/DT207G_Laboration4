@@ -22,6 +22,11 @@ const User = require('../models/User');
 //Hämta middleware för att verifiera token
 const authToken = require('../authJwt/authToken');
 
+//Test route
+router.get('/', (req, res) => {
+    res.json({ message: `Hannas API` });
+});
+
 //skyddad route som listar användare, kräver giltig token
 router.get('/users', authToken, async (req, res) => {
         try {
