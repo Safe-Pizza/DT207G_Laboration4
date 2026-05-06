@@ -22,9 +22,20 @@ const User = require('../models/User');
 //Hämta middleware för att verifiera token
 const authToken = require('../authJwt/authToken');
 
-//skyddad route
-router.get('/protected', authToken, async (req, res) => {
-    res.status(200).json({ message: `Skyddad sida` });
+//skyddad route som listar användare, kräver giltig token
+router.get('/users', authToken, async (req, res) => {
+        try {
+        let result = await User.find({}); //Query för alla användare
+
+        //kontroll om databas saknar data
+        if (result.length === 0) {
+            res.status(404).json({ message: "No users found" });
+        } else {
+            return res.json(result); //returnera response med alla användare
+        }
+    } catch (error) {
+        return res.status(500).json(error); // felmeddelande
+    }
 });
 
 //Skapa användarkonto
