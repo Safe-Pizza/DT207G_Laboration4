@@ -43,6 +43,20 @@ router.get('/users', authToken, async (req, res) => {
     }
 });
 
+router.delete('/users/:username', authToken, async (req, res) => {
+    const query = { username: req.params.username }; // username för specifikt användare
+
+    try {
+        let result = await User.deleteOne(query);
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: "No user found with that username" });
+        }
+        return res.json({ message: `Success! User with username: ${query.username} is now deleted.` });
+    } catch (error) {
+        return res.status(400).json({ message: `Error-message: ${error}` }); // felmeddelande
+    }
+})
+
 //Skapa användarkonto
 router.post('/register', async (req, res) => {
     try {
