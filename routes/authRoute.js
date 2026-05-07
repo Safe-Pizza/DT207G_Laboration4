@@ -43,6 +43,7 @@ router.get('/users', authToken, async (req, res) => {
     }
 });
 
+//skyddad route som tar bort användare, kräver giltig token
 router.delete('/users/:username', authToken, async (req, res) => {
     const query = { username: req.params.username }; // username för specifikt användare
 
